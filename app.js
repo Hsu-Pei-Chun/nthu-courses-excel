@@ -22,13 +22,23 @@ function cleanRecord(record) {
 
 async function fetchCourseData() {
   const url = CORS_PROXY + encodeURIComponent(NTHU_URL);
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
+  let response;
+  try {
+    response = await fetch(url);
+  } catch (_) {
+    throw new Error('NETWORK_ERROR');
   }
-  const data = await response.json();
+  if (!response.ok) {
+    throw new Error('NETWORK_ERROR');
+  }
+  let data;
+  try {
+    data = await response.json();
+  } catch (_) {
+    throw new Error('PARSE_ERROR');
+  }
   if (!Array.isArray(data)) {
-    throw new Error('回傳資料不是陣列');
+    throw new Error('PARSE_ERROR');
   }
   return data;
 }
@@ -81,12 +91,15 @@ function bindButton() {
     } catch (err) {
       console.error(err);
       let message;
-      if (err instanceof TypeError || (err.message && err.message.startsWith('HTTP'))) {
-        message = '下載失敗：無法連線到資料來源，請稍後再試';
-      } else if (err.message && err.message.includes('JSON')) {
-        message = '下載失敗：資料格式異常';
-      } else {
-        message = `下載失敗：${err.message}`;
+      switch (err.message) {
+        case 'NETWORK_ERROR':
+          message = '下載失敗：無法連線到資料來源，請稍後再試';
+          break;
+        case 'PARSE_ERROR':
+          message = '下載失敗：資料格式異常';
+          break;
+        default:
+          message = `下載失敗：${err.message}`;
       }
       setStatus('error', message);
     } finally {
