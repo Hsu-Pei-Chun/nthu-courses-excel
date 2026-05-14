@@ -149,14 +149,18 @@ CORS proxy（在 JS 裡硬編碼）：
 
 ### 6. 狀態機
 
-按鈕 + status 的三個狀態：
+按鈕 + status 的狀態：
 
-| 狀態 | 按鈕 | status 文字 | status 顏色 |
-|---|---|---|---|
-| idle | enable | 空 | – |
-| loading | disable | 抓取中… | 灰 |
-| success | enable | 已下載 清大課程_YYYYMMDD.xlsx | 綠 |
-| error | enable | 下載失敗：{錯誤訊息}，請稍後再試 | 紅 |
+| 狀態 | 按鈕 | status 文字 | status 顏色 | spinner |
+|---|---|---|---|---|
+| idle | enable | 空 | – | – |
+| loading (下載階段) | disable | 下載資料中… | 灰 | 旋轉 |
+| loading (整理階段) | disable | 整理欄位中… | 灰 | 旋轉 |
+| loading (產生階段) | disable | 產生 Excel 中… | 灰 | 旋轉 |
+| success | enable | 已下載 清大課程_YYYYMMDD.xlsx | 綠 | – |
+| error | enable | 下載失敗：{錯誤訊息}，請稍後再試 | 紅 | – |
+
+進度提醒做法：純 CSS spinner（`#status.loading::before` + `@keyframes spin`），在 status 文字前顯示一個旋轉圈圈，配合三段階段訊息。因為 codetabs proxy 是 chunked transfer encoding、不給 `Content-Length`，所以**不做精確百分比進度**，只用「階段訊息 + spinner」表達「正在動」與「目前階段」。階段切換之間 `await new Promise(r => setTimeout(r, 0))` 讓瀏覽器 repaint。
 
 下次點按鈕時 status 清空回到 loading。
 
@@ -180,8 +184,8 @@ CORS proxy（在 JS 裡硬編碼）：
 純前端、依賴外部服務（CORS proxy + 清大 server），單元測試 ROI 低。改成**手動驗收 checklist**：
 
 1. 開啟 `index.html`，畫面看到按鈕 + 空白 status
-2. 點按鈕，status 立刻變「抓取中…」、按鈕 disable
-3. 約幾秒後瀏覽器自動下載 `.xlsx`，status 變「已下載 …」
+2. 點按鈕，status 立刻變「下載資料中…」+ 旋轉 spinner、按鈕 disable
+3. 約幾秒後階段切到「整理欄位中…」→「產生 Excel 中…」（spinner 持續旋轉），最後瀏覽器自動下載 `.xlsx`，status 變「已下載 …」（spinner 消失、變綠色）
 4. 打開下載的 .xlsx，確認：
    - 第一列是 19 個中文欄位名
    - 有數百到數千列資料（清大每學期約幾千堂課）
@@ -192,7 +196,7 @@ CORS proxy（在 JS 裡硬編碼）：
 
 ## 不做的事（YAGNI）
 
-- 進度條 / loading spinner（3.2 MB 通常數秒內完成）
+- 精確百分比進度條（codetabs 是 chunked transfer，沒給 Content-Length 算不出來；改用階段訊息 + spinner 取代，見第 6 節）
 - 欄位篩選 / 搜尋 / 排序
 - 結果預覽（直接下載）
 - 快取 / localStorage（每次抓最新）

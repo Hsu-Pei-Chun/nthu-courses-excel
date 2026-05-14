@@ -43,8 +43,13 @@ async function fetchCourseData() {
   return data;
 }
 
-function downloadAsExcel(records) {
+async function downloadAsExcel(records, setPhase) {
+  if (setPhase) setPhase('整理欄位中…');
+  await new Promise(r => setTimeout(r, 0));
   const cleaned = records.map(cleanRecord);
+
+  if (setPhase) setPhase('產生 Excel 中…');
+  await new Promise(r => setTimeout(r, 0));
   const worksheet = XLSX.utils.json_to_sheet(cleaned);
 
   // 計算欄寬：每欄取（欄名長度 vs 該欄所有值最大字數）+ 2，上限 50
@@ -83,10 +88,10 @@ function bindButton() {
   const btn = document.getElementById('downloadBtn');
   btn.addEventListener('click', async () => {
     btn.disabled = true;
-    setStatus('loading', '抓取中…');
+    setStatus('loading', '下載資料中…');
     try {
       const records = await fetchCourseData();
-      const filename = downloadAsExcel(records);
+      const filename = await downloadAsExcel(records, msg => setStatus('loading', msg));
       setStatus('success', `已下載 ${filename}`);
     } catch (err) {
       console.error(err);
