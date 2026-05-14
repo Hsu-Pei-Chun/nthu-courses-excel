@@ -10,7 +10,65 @@
   <pre id="output"></pre>
   <script src="app.js"></script>
   <script>
-    // 後續 task 在這裡寫 assertion
+    function eq(actual, expected, label) {
+      const pass = actual === expected;
+      const line = `${pass ? '✅' : '❌'} ${label}\n   actual:   ${JSON.stringify(actual)}\n   expected: ${JSON.stringify(expected)}`;
+      console.log(line);
+      document.getElementById('output').textContent += line + '\n';
+      if (!pass) console.error('FAIL:', label);
+    }
+
+    function run() {
+      // 結尾換行
+      const r1 = cleanRecord({ a: 'abc\n' });
+      eq(r1.a, 'abc', '結尾單個 \\n 移除');
+
+      const r2 = cleanRecord({ a: 'abc\n\n' });
+      eq(r2.a, 'abc', '結尾多個 \\n 移除');
+
+      // 中間換行
+      const r3 = cleanRecord({ a: 'abc\ndef' });
+      eq(r3.a, 'abc / def', '中間 \\n 替換成 / ');
+
+      // \t 替換
+      const r4 = cleanRecord({ a: 'abc\tdef' });
+      eq(r4.a, 'abc def', '\\t 替換成空格');
+
+      // 真實樣本：授課教師
+      const r5 = cleanRecord({ a: '吳劍侯\tWU, CHIEN-HOU\n' });
+      eq(r5.a, '吳劍侯 WU, CHIEN-HOU', '教師欄位混合清理');
+
+      // 真實樣本：教室與上課時間
+      const r6 = cleanRecord({ a: 'BMES醫環717\tR7R8R9\n' });
+      eq(r6.a, 'BMES醫環717 R7R8R9', '教室時間欄位混合清理');
+
+      // 多空白縮減
+      const r7 = cleanRecord({ a: 'a   b' });
+      eq(r7.a, 'a b', '連續多空白縮為單一空格');
+
+      // trim
+      const r8 = cleanRecord({ a: '  abc  ' });
+      eq(r8.a, 'abc', '頭尾 trim');
+
+      // 空字串
+      const r9 = cleanRecord({ a: '' });
+      eq(r9.a, '', '空字串保留');
+
+      // 單空格 → trim 後空
+      const r10 = cleanRecord({ a: ' ' });
+      eq(r10.a, '', '單一空格 trim 後變空');
+
+      // 非字串值原樣保留（理論上不會出現，但保險）
+      const r11 = cleanRecord({ a: 3 });
+      eq(r11.a, 3, '非字串值原樣保留');
+
+      // 多欄位
+      const r12 = cleanRecord({ a: 'x\n', b: 'y\t z' });
+      eq(r12.a, 'x', '多欄位 - 欄位 a');
+      eq(r12.b, 'y z', '多欄位 - 欄位 b');
+    }
+
+    run();
   </script>
 </body>
 </html>
