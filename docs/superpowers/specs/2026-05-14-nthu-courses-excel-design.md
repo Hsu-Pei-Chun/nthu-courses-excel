@@ -118,8 +118,10 @@ status 顯示「已下載」，按鈕重新 enable
 ### 3. 依賴（兩個 CDN）
 
 ```html
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 ```
+
+註：原本選 `cdn.sheetjs.com/xlsx-latest`，但實測在 playwright/chromium 環境下 minified bundle 會丟 `Invalid regular expression flags` 導致 XLSX 無法定義；改用 jsdelivr 鎖版本 0.18.5 後穩定。
 
 CORS proxy（在 JS 裡硬編碼）：
 - 主用：`https://api.codetabs.com/v1/proxy/?quest=`

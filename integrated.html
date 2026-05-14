@@ -1,0 +1,268 @@
+<article class="content-area">
+<style type="text/css">/* 基礎容器 */
+    .content-area {
+      font-family: "Noto Sans TC", -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #333;
+      line-height: 1.6;
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .step-card {
+      background: #ffffff;
+      border: 1px solid #e0e4e8;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .step-num {
+      background: #1f2f6d;
+      color: white !important;
+      padding: 2px 12px;
+      border-radius: 50px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    .warning-box {
+      background: #f8f9fa;
+      border: 1px dashed #cbd5e0;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .highlight-text { color: #d32f2f; font-weight: bold; }
+
+    /* 按鈕樣式：鎖定白色避免變色 */
+    .btn-link,
+    .btn-link:link,
+    .btn-link:visited,
+    .btn-link:hover,
+    .btn-link:active,
+    .btn-link:focus {
+      display: inline-block;
+      background: #4a6ee0;
+      color: #ffffff !important;
+      padding: 12px 24px;
+      border-radius: 6px;
+      text-decoration: none !important;
+      margin: 10px 0;
+      font-weight: 600;
+      transition: background 0.2s;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .btn-link:hover { background: #3557c1; color: #ffffff !important; }
+    .btn-link:active { background: #2a4496; color: #ffffff !important; }
+    .btn-link:disabled { background: #9ca8d4; cursor: not-allowed; opacity: 0.7; }
+
+    .img-guide {
+      max-width: 100%;
+      height: auto !important;
+      border: 2px solid #eee;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .notice-banner {
+      background-color: #fff3cd;
+      border-left: 5px solid #ffb300;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+    }
+
+    /* 轉檔狀態訊息 */
+    #convertStatus {
+      margin-top: 12px;
+      min-height: 1.5em;
+      font-size: 0.95rem;
+    }
+    #convertStatus.loading { color: #4a5568; }
+    #convertStatus.success { color: #1a7f37; }
+    #convertStatus.error   { color: #c0322b; }
+
+    #convertStatus.loading::before {
+      content: '';
+      display: inline-block;
+      width: 0.9em;
+      height: 0.9em;
+      margin-right: 0.5em;
+      vertical-align: middle;
+      border: 2px solid rgba(74, 110, 224, 0.25);
+      border-top-color: #4a6ee0;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+</style>
+<h1 style="color: #1f2f6d; border-left: 8px solid #1f2f6d; padding-left: 15px; margin-bottom: 30px;">全校課程 Excel 檔 【手動下載指南】</h1>
+
+<div class="notice-banner"><strong>⚠️ 系統提醒：</strong> 如需獲取全校課程 Excel 資料，請依照以下 3 個步驟進行手動轉換。</div>
+
+<div class="step-card">
+<h3><span class="step-num">1</span>下載原始課程檔</h3>
+
+<p>請先點擊下方按鈕獲取原始課程資料：</p>
+<a class="btn-link" download="open_course_data.json" href="https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/OPENDATA/open_course_data.json" target="_blank">下載課程原始檔</a>
+
+<div class="warning-box">
+<p style="margin: 0 0 10px 0; color: #4a5568; font-size: 1.1rem; font-weight: bold;">💡 點擊按鈕後請注意：</p>
+
+<p style="margin: 0 0 10px 0; color: #4a5568;">若畫面出現<span style="background-color:#ffff99;"><strong>整頁密密麻麻的文字</strong></span>，那是正確的資料。請直接在該網頁按 <span class="highlight-text">「滑鼠右鍵」&rarr;「另存新檔」</span> 儲存即可。</p>
+<img alt="另存新檔示意圖" src="/var/file/208/1208/img/294/json_file_0_1.png" style="max-width:100%; height:auto; width:300px;" /></div>
+</div>
+
+<div class="step-card">
+<h3><span class="step-num">2</span>轉換為 Excel 格式</h3>
+
+<p>請點擊下方按鈕，選擇剛剛下載的 JSON 檔，系統會自動清理欄位並轉成 Excel：</p>
+
+<input type="file" id="jsonFileInput" accept=".json,application/json" style="display:none">
+<button class="btn-link" id="convertBtn" type="button">選擇 JSON 並轉成 Excel</button>
+<div id="convertStatus" aria-live="polite"></div>
+</div>
+
+<div class="step-card">
+<h3><span class="step-num">3</span>開啟 Excel 瀏覽</h3>
+
+<p>資料下載後，<b>點擊下載的檔案</b>，即可直接透過 Excel 瀏覽。</p>
+
+<div style="font-size: 1.1rem; color: #666; background: #f4f7ff; padding: 15px; border-radius: 5px; border-left: 4px solid #4a6ee0; margin-top: 15px;"><strong>💡 貼心提醒：</strong> 課程檔<b>每日更新一次</b>，即時異動請以「課程查詢系統」為準。</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  function cleanRecord(record) {
+    const out = {};
+    for (const [key, value] of Object.entries(record)) {
+      if (typeof value !== 'string') {
+        out[key] = value;
+        continue;
+      }
+      out[key] = value
+        .replace(/\n+$/, '')
+        .replace(/\n/g, ' / ')
+        .replace(/\t/g, ' ')
+        .replace(/ {2,}/g, ' ')
+        .trim();
+    }
+    return out;
+  }
+
+  function setStatus(state, message) {
+    const el = document.getElementById('convertStatus');
+    el.className = state;
+    el.textContent = message;
+  }
+
+  async function buildAndDownloadXlsx(records) {
+    setStatus('loading', '整理欄位中…');
+    await new Promise(r => setTimeout(r, 0));
+    const cleaned = records.map(cleanRecord);
+
+    setStatus('loading', '產生 Excel 中…');
+    await new Promise(r => setTimeout(r, 0));
+    const worksheet = XLSX.utils.json_to_sheet(cleaned);
+
+    const keys = Object.keys(cleaned[0] || {});
+    worksheet['!cols'] = keys.map(key => {
+      const maxValueLen = cleaned.reduce((max, row) => {
+        const v = row[key];
+        const len = v == null ? 0 : String(v).length;
+        return Math.max(max, len);
+      }, 0);
+      const width = Math.min(50, Math.max(key.length, maxValueLen) + 2);
+      return { wch: width };
+    });
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, '課程資料');
+
+    const today = new Date();
+    const yyyymmdd =
+      today.getFullYear().toString() +
+      String(today.getMonth() + 1).padStart(2, '0') +
+      String(today.getDate()).padStart(2, '0');
+    const filename = `清大課程_${yyyymmdd}.xlsx`;
+
+    XLSX.writeFile(workbook, filename);
+    return filename;
+  }
+
+  function readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('READ_ERROR'));
+      reader.readAsText(file, 'utf-8');
+    });
+  }
+
+  const input = document.getElementById('jsonFileInput');
+  const btn = document.getElementById('convertBtn');
+
+  btn.addEventListener('click', () => input.click());
+
+  input.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    btn.disabled = true;
+    setStatus('loading', '讀取檔案中…');
+    try {
+      const text = await readFileAsText(file);
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (_) {
+        throw new Error('PARSE_ERROR');
+      }
+      if (!Array.isArray(data)) {
+        throw new Error('PARSE_ERROR');
+      }
+      if (data.length === 0) {
+        throw new Error('EMPTY_ERROR');
+      }
+
+      const filename = await buildAndDownloadXlsx(data);
+      setStatus('success', `✅ 轉檔完成，已下載 ${filename}（共 ${data.length} 筆）`);
+    } catch (err) {
+      console.error(err);
+      let message;
+      switch (err.message) {
+        case 'READ_ERROR':
+          message = '❌ 讀檔失敗：請確認檔案沒有損毀';
+          break;
+        case 'PARSE_ERROR':
+          message = '❌ 檔案格式錯誤：請確認你選的是步驟 1 下載的 JSON 檔';
+          break;
+        case 'EMPTY_ERROR':
+          message = '❌ 檔案內容為空，請重新下載步驟 1 的原始檔';
+          break;
+        default:
+          message = `❌ 轉檔失敗：${err.message}`;
+      }
+      setStatus('error', message);
+    } finally {
+      btn.disabled = false;
+      input.value = '';
+    }
+  });
+})();
+</script>
+</article>
