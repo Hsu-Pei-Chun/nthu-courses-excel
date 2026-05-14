@@ -20,6 +20,18 @@ function cleanRecord(record) {
   return out;
 }
 
-// fetchCourseData() -> Promise<Array>
+async function fetchCourseData() {
+  const url = CORS_PROXY + encodeURIComponent(NTHU_URL);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  if (!Array.isArray(data)) {
+    throw new Error('回傳資料不是陣列');
+  }
+  return data;
+}
+
 // downloadAsExcel(records) -> void
 // bindButton() -> void
