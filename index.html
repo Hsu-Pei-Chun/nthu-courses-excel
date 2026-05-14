@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>清大課程匯出</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>清大開放課程資料匯出</h1>
+    <button id="downloadBtn" type="button">下載清大課程 Excel</button>
+    <div id="status" aria-live="polite"></div>
+  </main>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="app.js"></script>
+  <script>
+    bindButton();
+  </script>
+</body>
+</html>
