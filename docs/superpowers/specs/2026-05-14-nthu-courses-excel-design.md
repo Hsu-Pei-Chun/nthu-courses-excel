@@ -122,8 +122,9 @@ status 顯示「已下載」，按鈕重新 enable
 ```
 
 CORS proxy（在 JS 裡硬編碼）：
-- 主用：`https://corsproxy.io/?url=`
+- 主用：`https://api.codetabs.com/v1/proxy/?quest=`
 - 不做 fallback；主 proxy 掛掉就回報錯誤讓 user 稍後再試
+- 註：原本選擇 `corsproxy.io`，但實測對未註冊 origin（含本地 `file://`）直接回 403；改用 codetabs（已驗證能拿到完整 3.2 MB 內容、CORS header 正確、無註冊要求）
 
 ### 4. 欄位清理規則（`cleanRecord` 函式）
 

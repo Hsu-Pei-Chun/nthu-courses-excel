@@ -1,7 +1,7 @@
 'use strict';
 
 const NTHU_URL = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/OPENDATA/open_course_data.json';
-const CORS_PROXY = 'https://corsproxy.io/?url=';
+const CORS_PROXY = 'https://api.codetabs.com/v1/proxy/?quest=';
 
 function cleanRecord(record) {
   const out = {};
