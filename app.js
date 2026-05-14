@@ -33,5 +33,34 @@ async function fetchCourseData() {
   return data;
 }
 
-// downloadAsExcel(records) -> void
+function downloadAsExcel(records) {
+  const cleaned = records.map(cleanRecord);
+  const worksheet = XLSX.utils.json_to_sheet(cleaned);
+
+  // 計算欄寬：每欄取（欄名長度 vs 該欄所有值最大字數）+ 2，上限 50
+  const keys = Object.keys(cleaned[0] || {});
+  worksheet['!cols'] = keys.map(key => {
+    const maxValueLen = cleaned.reduce((max, row) => {
+      const v = row[key];
+      const len = v == null ? 0 : String(v).length;
+      return Math.max(max, len);
+    }, 0);
+    const width = Math.min(50, Math.max(key.length, maxValueLen) + 2);
+    return { wch: width };
+  });
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, '課程資料');
+
+  const today = new Date();
+  const yyyymmdd =
+    today.getFullYear().toString() +
+    String(today.getMonth() + 1).padStart(2, '0') +
+    String(today.getDate()).padStart(2, '0');
+  const filename = `清大課程_${yyyymmdd}.xlsx`;
+
+  XLSX.writeFile(workbook, filename);
+  return filename;
+}
+
 // bindButton() -> void
