@@ -123,10 +123,13 @@ status 顯示「已下載」，按鈕重新 enable
 
 註：原本選 `cdn.sheetjs.com/xlsx-latest`，但實測在 playwright/chromium 環境下 minified bundle 會丟 `Invalid regular expression flags` 導致 XLSX 無法定義；改用 jsdelivr 鎖版本 0.18.5 後穩定。
 
-CORS proxy（在 JS 裡硬編碼）：
-- 主用：`https://api.codetabs.com/v1/proxy/?quest=`
-- 不做 fallback；主 proxy 掛掉就回報錯誤讓 user 稍後再試
-- 註：原本選擇 `corsproxy.io`，但實測對未註冊 origin（含本地 `file://`）直接回 403；改用 codetabs（已驗證能拿到完整 3.2 MB 內容、CORS header 正確、無註冊要求）
+CORS proxy（自架 Cloudflare Worker，URL 在 JS 裡硬編碼）：
+- 主用：`https://nthu-courses-proxy.philosophysis.workers.dev/`
+- 不做 fallback；Worker 掛掉就回報錯誤讓 user 稍後再試或改用 `<details>` 折疊區內的手動步驟
+- 演進記錄：
+  1. 原選 `corsproxy.io`，未註冊 origin 直接 403
+  2. 改用 `codetabs.com`，curl 抓得到完整 3.2 MB 但**瀏覽器 fetch 不穩、會在 230 KB ~ 770 KB 間隨機截斷**（chunked transfer + 免費 proxy 對大檔的共通毛病）
+  3. 最終改用 user 自架的 Cloudflare Worker（5 行 JS、free tier 每日 10 萬次、檔案上限 10 MB 對 3.2 MB 綽綽有餘）。Worker code 在 `worker.js`，部署步驟見 `DEPLOY.md`
 
 ### 4. 欄位清理規則（`cleanRecord` 函式）
 

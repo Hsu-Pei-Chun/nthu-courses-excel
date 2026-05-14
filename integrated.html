@@ -37,7 +37,6 @@
 
     .highlight-text { color: #d32f2f; font-weight: bold; }
 
-    /* 按鈕樣式：鎖定白色避免變色 */
     .btn-link,
     .btn-link:link,
     .btn-link:visited,
@@ -79,17 +78,17 @@
       margin-bottom: 25px;
     }
 
-    /* 轉檔狀態訊息 */
-    #convertStatus {
+    /* 下載狀態訊息 + spinner */
+    #downloadStatus {
       margin-top: 12px;
       min-height: 1.5em;
       font-size: 0.95rem;
     }
-    #convertStatus.loading { color: #4a5568; }
-    #convertStatus.success { color: #1a7f37; }
-    #convertStatus.error   { color: #c0322b; }
+    #downloadStatus.loading { color: #4a5568; }
+    #downloadStatus.success { color: #1a7f37; }
+    #downloadStatus.error   { color: #c0322b; }
 
-    #convertStatus.loading::before {
+    #downloadStatus.loading::before {
       content: '';
       display: inline-block;
       width: 0.9em;
@@ -105,46 +104,66 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    /* fallback 折疊區 */
+    .fallback-details {
+      margin-top: 30px;
+      padding: 10px 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    .fallback-details summary {
+      cursor: pointer;
+      color: #4a5568;
+      font-size: 0.95rem;
+      padding: 5px 0;
+    }
+    .fallback-details summary:hover { color: #1f2f6d; }
 </style>
-<h1 style="color: #1f2f6d; border-left: 8px solid #1f2f6d; padding-left: 15px; margin-bottom: 30px;">全校課程 Excel 檔 【手動下載指南】</h1>
+<h1 style="color: #1f2f6d; border-left: 8px solid #1f2f6d; padding-left: 15px; margin-bottom: 30px;">全校課程 Excel 檔 【一鍵下載】</h1>
 
-<div class="notice-banner"><strong>⚠️ 系統提醒：</strong> 如需獲取全校課程 Excel 資料，請依照以下 3 個步驟進行手動轉換。</div>
+<div class="notice-banner"><strong>⚠️ 系統提醒：</strong> 點下方按鈕即可一鍵抓取最新全校課程資料、自動轉成 Excel 檔下載。</div>
 
 <div class="step-card">
-<h3><span class="step-num">1</span>下載原始課程檔</h3>
+<h3><span class="step-num">1</span>一鍵下載 Excel</h3>
 
-<p>請先點擊下方按鈕獲取原始課程資料：</p>
-<a class="btn-link" download="open_course_data.json" href="https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/OPENDATA/open_course_data.json" target="_blank">下載課程原始檔</a>
+<p>點下方按鈕，系統會自動抓取最新清大開放課程資料、清理欄位後轉成 Excel 並下載：</p>
 
-<div class="warning-box">
-<p style="margin: 0 0 10px 0; color: #4a5568; font-size: 1.1rem; font-weight: bold;">💡 點擊按鈕後請注意：</p>
-
-<p style="margin: 0 0 10px 0; color: #4a5568;">若畫面出現<span style="background-color:#ffff99;"><strong>整頁密密麻麻的文字</strong></span>，那是正確的資料。請直接在該網頁按 <span class="highlight-text">「滑鼠右鍵」&rarr;「另存新檔」</span> 儲存即可。</p>
-<img alt="另存新檔示意圖" src="/var/file/208/1208/img/294/json_file_0_1.png" style="max-width:100%; height:auto; width:300px;" /></div>
+<button class="btn-link" id="downloadBtn" type="button">下載清大課程 Excel</button>
+<div id="downloadStatus" aria-live="polite"></div>
 </div>
 
 <div class="step-card">
-<h3><span class="step-num">2</span>轉換為 Excel 格式</h3>
-
-<p>請點擊下方按鈕，選擇剛剛下載的 JSON 檔，系統會自動清理欄位並轉成 Excel：</p>
-
-<input type="file" id="jsonFileInput" accept=".json,application/json" style="display:none">
-<button class="btn-link" id="convertBtn" type="button">選擇 JSON 並轉成 Excel</button>
-<div id="convertStatus" aria-live="polite"></div>
-</div>
-
-<div class="step-card">
-<h3><span class="step-num">3</span>開啟 Excel 瀏覽</h3>
+<h3><span class="step-num">2</span>開啟 Excel 瀏覽</h3>
 
 <p>資料下載後，<b>點擊下載的檔案</b>，即可直接透過 Excel 瀏覽。</p>
 
 <div style="font-size: 1.1rem; color: #666; background: #f4f7ff; padding: 15px; border-radius: 5px; border-left: 4px solid #4a6ee0; margin-top: 15px;"><strong>💡 貼心提醒：</strong> 課程檔<b>每日更新一次</b>，即時異動請以「課程查詢系統」為準。</div>
 </div>
 
+<details class="fallback-details">
+<summary>萬一一鍵下載失敗？看手動步驟</summary>
+
+<div style="padding-top: 15px;">
+<p>如果按鈕無回應或顯示「下載失敗」，可改用手動方式：</p>
+
+<p><strong>1. 下載原始課程檔</strong>：點擊以下連結獲取原始 JSON 資料：</p>
+<a class="btn-link" download="open_course_data.json" href="https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/OPENDATA/open_course_data.json" target="_blank">下載課程原始檔</a>
+
+<div class="warning-box">
+<p style="margin: 0 0 10px 0; color: #4a5568;">若畫面出現<span style="background-color:#ffff99;"><strong>整頁密密麻麻的文字</strong></span>，那是正確的資料。請直接在該網頁按 <span class="highlight-text">「滑鼠右鍵」&rarr;「另存新檔」</span> 儲存即可。</p>
+</div>
+
+<p><strong>2. 用線上工具轉成 Excel</strong>：例如 <a href="https://conversiontools.io/convert/json-to-excel" target="_blank">JSON to Excel</a> 之類的工具。</p>
+</div>
+</details>
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 (function () {
   'use strict';
+
+  const WORKER_URL = 'https://nthu-courses-proxy.philosophysis.workers.dev/';
 
   function cleanRecord(record) {
     const out = {};
@@ -164,17 +183,39 @@
   }
 
   function setStatus(state, message) {
-    const el = document.getElementById('convertStatus');
+    const el = document.getElementById('downloadStatus');
     el.className = state;
     el.textContent = message;
   }
 
-  async function buildAndDownloadXlsx(records) {
-    setStatus('loading', '整理欄位中…');
+  async function fetchCourseData() {
+    let response;
+    try {
+      response = await fetch(WORKER_URL);
+    } catch (_) {
+      throw new Error('NETWORK_ERROR');
+    }
+    if (!response.ok) {
+      throw new Error('NETWORK_ERROR');
+    }
+    let data;
+    try {
+      data = await response.json();
+    } catch (_) {
+      throw new Error('PARSE_ERROR');
+    }
+    if (!Array.isArray(data) || data.length === 0) {
+      throw new Error('PARSE_ERROR');
+    }
+    return data;
+  }
+
+  async function buildAndDownloadXlsx(records, setPhase) {
+    if (setPhase) setPhase('整理欄位中…');
     await new Promise(r => setTimeout(r, 0));
     const cleaned = records.map(cleanRecord);
 
-    setStatus('loading', '產生 Excel 中…');
+    if (setPhase) setPhase('產生 Excel 中…');
     await new Promise(r => setTimeout(r, 0));
     const worksheet = XLSX.utils.json_to_sheet(cleaned);
 
@@ -203,64 +244,30 @@
     return filename;
   }
 
-  function readFileAsText(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = () => reject(new Error('READ_ERROR'));
-      reader.readAsText(file, 'utf-8');
-    });
-  }
-
-  const input = document.getElementById('jsonFileInput');
-  const btn = document.getElementById('convertBtn');
-
-  btn.addEventListener('click', () => input.click());
-
-  input.addEventListener('change', async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
+  const btn = document.getElementById('downloadBtn');
+  btn.addEventListener('click', async () => {
     btn.disabled = true;
-    setStatus('loading', '讀取檔案中…');
+    setStatus('loading', '下載資料中…');
     try {
-      const text = await readFileAsText(file);
-
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (_) {
-        throw new Error('PARSE_ERROR');
-      }
-      if (!Array.isArray(data)) {
-        throw new Error('PARSE_ERROR');
-      }
-      if (data.length === 0) {
-        throw new Error('EMPTY_ERROR');
-      }
-
-      const filename = await buildAndDownloadXlsx(data);
-      setStatus('success', `✅ 轉檔完成，已下載 ${filename}（共 ${data.length} 筆）`);
+      const records = await fetchCourseData();
+      const filename = await buildAndDownloadXlsx(records, msg => setStatus('loading', msg));
+      setStatus('success', `已下載 ${filename}（共 ${records.length} 筆）`);
     } catch (err) {
       console.error(err);
       let message;
       switch (err.message) {
-        case 'READ_ERROR':
-          message = '❌ 讀檔失敗：請確認檔案沒有損毀';
+        case 'NETWORK_ERROR':
+          message = '下載失敗：無法連線到資料來源，請稍後再試或改用下方手動步驟';
           break;
         case 'PARSE_ERROR':
-          message = '❌ 檔案格式錯誤：請確認你選的是步驟 1 下載的 JSON 檔';
-          break;
-        case 'EMPTY_ERROR':
-          message = '❌ 檔案內容為空，請重新下載步驟 1 的原始檔';
+          message = '下載失敗：資料格式異常，請改用下方手動步驟';
           break;
         default:
-          message = `❌ 轉檔失敗：${err.message}`;
+          message = `下載失敗：${err.message}`;
       }
       setStatus('error', message);
     } finally {
       btn.disabled = false;
-      input.value = '';
     }
   });
 })();

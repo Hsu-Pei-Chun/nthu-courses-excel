@@ -1,7 +1,8 @@
 'use strict';
 
-const NTHU_URL = 'https://www.ccxp.nthu.edu.tw/ccxp/INQUIRE/JH/OPENDATA/open_course_data.json';
-const CORS_PROXY = 'https://api.codetabs.com/v1/proxy/?quest=';
+// 走 Cloudflare Worker proxy（自架），避開清大沒給 CORS 的限制。
+// 部署方式見 DEPLOY.md。
+const WORKER_URL = 'https://nthu-courses-proxy.philosophysis.workers.dev/';
 
 function cleanRecord(record) {
   const out = {};
@@ -21,10 +22,9 @@ function cleanRecord(record) {
 }
 
 async function fetchCourseData() {
-  const url = CORS_PROXY + encodeURIComponent(NTHU_URL);
   let response;
   try {
-    response = await fetch(url);
+    response = await fetch(WORKER_URL);
   } catch (_) {
     throw new Error('NETWORK_ERROR');
   }
