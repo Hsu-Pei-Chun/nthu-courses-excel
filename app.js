@@ -63,4 +63,34 @@ function downloadAsExcel(records) {
   return filename;
 }
 
-// bindButton() -> void
+function setStatus(state, message) {
+  const el = document.getElementById('status');
+  el.className = state;  // '' | 'loading' | 'success' | 'error'
+  el.textContent = message;
+}
+
+function bindButton() {
+  const btn = document.getElementById('downloadBtn');
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    setStatus('loading', '抓取中…');
+    try {
+      const records = await fetchCourseData();
+      const filename = downloadAsExcel(records);
+      setStatus('success', `已下載 ${filename}`);
+    } catch (err) {
+      console.error(err);
+      let message;
+      if (err instanceof TypeError || (err.message && err.message.startsWith('HTTP'))) {
+        message = '下載失敗：無法連線到資料來源，請稍後再試';
+      } else if (err.message && err.message.includes('JSON')) {
+        message = '下載失敗：資料格式異常';
+      } else {
+        message = `下載失敗：${err.message}`;
+      }
+      setStatus('error', message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
