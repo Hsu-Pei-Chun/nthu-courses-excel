@@ -4,10 +4,13 @@
 // 部署方式見 DEPLOY.md。
 const WORKER_URL = 'https://nthu-courses-proxy.philosophysis.workers.dev/';
 
+// 原樣保留、不清理的欄位：科號的英文代碼固定 4 碼、不足補空白（如 "CL  "），縮空白會破壞格式
+const RAW_KEYS = new Set(['科號']);
+
 function cleanRecord(record) {
   const out = {};
   for (const [key, value] of Object.entries(record)) {
-    if (typeof value !== 'string') {
+    if (typeof value !== 'string' || RAW_KEYS.has(key)) {
       out[key] = value;
       continue;
     }
