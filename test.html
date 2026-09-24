@@ -66,6 +66,10 @@
       const r12 = cleanRecord({ a: 'x\n', b: 'y\t z' });
       eq(r12.a, 'x', '多欄位 - 欄位 a');
       eq(r12.b, 'y z', '多欄位 - 欄位 b');
+
+      // 科號保留補齊用的空白
+      const r13 = cleanRecord({ '科號': '11510CL  101054' });
+      eq(r13['科號'], '11510CL  101054', '科號不縮空白');
     }
 
     run();
